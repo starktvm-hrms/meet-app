@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Huddle</title>
+<script>
+  // Static hosts serve this for unknown paths: turn /<base>/abc-defg-hij into room.html?m=abc-defg-hij
+  const parts = location.pathname.split('/').filter(Boolean);
+  const code = parts.pop() || '';
+  const base = '/' + parts.join('/') + (parts.length ? '/' : '');
+  location.replace(/^[a-z]{3}-[a-z]{4}-[a-z]{3}$/.test(code) ? `${base}room.html?m=${code}` : base);
+</script>

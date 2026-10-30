@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Huddle — Video meetings</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="home">
   <header class="home-header">
@@ -17,7 +17,7 @@
       <h1>Video calls and meetings for everyone</h1>
       <p>Connect, collaborate and celebrate from anywhere — with recording, chat, screen sharing and live captions built in.</p>
       <div class="home-actions">
-        <a class="btn primary" href="/new">＋ New meeting</a>
+        <a class="btn primary" id="new-btn" href="room.html">＋ New meeting</a>
         <form id="join-form" class="join-form">
           <input id="code" placeholder="Enter a code or link" autocomplete="off" />
           <button class="btn text" id="join-btn" disabled>Join</button>
@@ -42,8 +42,13 @@
     document.getElementById('join-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const m = input.value.trim().toLowerCase().match(RE);
-      if (m) location.href = '/' + m[1];
+      if (m) location.href = 'room.html?m=' + m[1];
       else err.textContent = 'That code doesn’t look right. Codes look like abc-defg-hij.';
+    });
+    document.getElementById('new-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      const pick = (n) => Array.from({ length: n }, () => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join('');
+      location.href = `room.html?m=${pick(3)}-${pick(4)}-${pick(3)}`;
     });
     const clock = document.getElementById('clock');
     const tick = () => clock.textContent = new Date().toLocaleString([], { hour: 'numeric', minute: '2-digit', weekday: 'short', month: 'short', day: 'numeric' });
