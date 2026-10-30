@@ -1,0 +1,16 @@
+{
+  "name": "huddle-meet",
+  "version": "1.0.0",
+  "description": "Video meeting app with recording, chat, screen share and live captions",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.22.3",
+    "socket.io": "^4.8.4"
+  }
+}

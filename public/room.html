@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Huddle meeting</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="room">
+  <!-- ============ Pre-join lobby ============ -->
+  <section id="lobby" class="lobby">
+    <div class="lobby-preview">
+      <div class="preview-box">
+        <video id="preview" autoplay playsinline muted></video>
+        <div class="preview-off" id="preview-off">Camera is off</div>
+        <div class="preview-controls">
+          <button class="round" id="lobby-mic" title="Toggle microphone"><span class="ms">mic</span></button>
+          <button class="round" id="lobby-cam" title="Toggle camera"><span class="ms">videocam</span></button>
+        </div>
+        <div class="meter" id="lobby-meter"><i></i></div>
+      </div>
+      <div class="device-row">
+        <label><span class="ms">mic</span><select id="sel-mic"></select></label>
+        <label><span class="ms">videocam</span><select id="sel-cam"></select></label>
+      </div>
+    </div>
+    <div class="lobby-join">
+      <h2>Ready to join?</h2>
+      <p class="muted" id="lobby-code"></p>
+      <input id="name" placeholder="Your name" maxlength="40" />
+      <button class="btn primary" id="join-now">Join now</button>
+      <p class="hint" id="lobby-err"></p>
+    </div>
+  </section>
+
+  <!-- ============ Meeting ============ -->
+  <section id="meeting" class="meeting hidden">
+    <div class="rec-badge hidden" id="rec-badge"><span class="dot"></span>REC <span id="rec-time">00:00</span></div>
+    <div class="main-area">
+      <div class="stage" id="stage"></div>
+      <aside class="panel hidden" id="panel">
+        <header>
+          <h3 id="panel-title">In-call messages</h3>
+          <button class="icon" id="panel-close"><span class="ms">close</span></button>
+        </header>
+        <div class="panel-body" id="panel-chat">
+          <p class="note">Messages can only be seen by people in the call and are deleted when the call ends.</p>
+          <div class="messages" id="messages"></div>
+          <form class="chat-form" id="chat-form">
+            <input id="chat-input" placeholder="Send a message" autocomplete="off" maxlength="2000" />
+            <button class="icon" title="Send"><span class="ms">send</span></button>
+          </form>
+        </div>
+        <div class="panel-body hidden" id="panel-people">
+          <p class="section-label">In call (<span id="people-count">1</span>)</p>
+          <ul class="people" id="people"></ul>
+        </div>
+        <div class="panel-body hidden" id="panel-info">
+          <p class="section-label">Joining info</p>
+          <p class="link-text" id="info-link"></p>
+          <button class="btn text" id="info-copy"><span class="ms">content_copy</span> Copy joining info</button>
+        </div>
+      </aside>
+    </div>
+
+    <div class="captions hidden" id="captions"></div>
+    <div class="reactions-layer" id="reactions-layer"></div>
+    <div class="toast hidden" id="toast"></div>
+
+    <footer class="bar">
+      <div class="bar-left"><span id="time"></span><span class="sep">|</span><span id="code-label"></span></div>
+      <div class="bar-center">
+        <button class="ctl" id="btn-mic" title="Turn off microphone (ctrl + d)"><span class="ms">mic</span></button>
+        <button class="ctl" id="btn-cam" title="Turn off camera (ctrl + e)"><span class="ms">videocam</span></button>
+        <button class="ctl" id="btn-cc" title="Turn on captions"><span class="ms">closed_caption</span></button>
+        <div class="pop-wrap">
+          <button class="ctl" id="btn-react" title="Send a reaction"><span class="ms">add_reaction</span></button>
+          <div class="popover hidden" id="react-pop">
+            <button>💖</button><button>👍</button><button>🎉</button><button>👏</button><button>😂</button><button>😮</button><button>😢</button><button>🤔</button>
+          </div>
+        </div>
+        <button class="ctl" id="btn-share" title="Present now"><span class="ms">present_to_all</span></button>
+        <button class="ctl" id="btn-hand" title="Raise hand"><span class="ms">back_hand</span></button>
+        <button class="ctl" id="btn-rec" title="Record meeting"><span class="ms">radio_button_checked</span></button>
+        <div class="pop-wrap">
+          <button class="ctl" id="btn-more" title="More options"><span class="ms">more_vert</span></button>
+          <div class="popover menu hidden" id="more-pop">
+            <button data-act="layout"><span class="ms">dashboard</span> Change layout (auto / tiled / spotlight)</button>
+            <button data-act="fullscreen"><span class="ms">fullscreen</span> Full screen</button>
+            <button data-act="copy"><span class="ms">link</span> Copy meeting link</button>
+          </div>
+        </div>
+        <button class="ctl leave" id="btn-leave" title="Leave call"><span class="ms">call_end</span></button>
+      </div>
+      <div class="bar-right">
+        <button class="icon" id="btn-info" title="Meeting details"><span class="ms">info</span></button>
+        <button class="icon" id="btn-people" title="Show everyone"><span class="ms">group</span><span class="badge" id="people-badge">1</span></button>
+        <button class="icon" id="btn-chat" title="Chat with everyone"><span class="ms">chat</span><span class="dot-badge hidden" id="chat-badge"></span></button>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ============ Left screen ============ -->
+  <section id="left" class="left hidden">
+    <h2 id="left-title">You left the meeting</h2>
+    <div class="left-actions">
+      <button class="btn outline" onclick="location.reload()">Rejoin</button>
+      <a class="btn primary" href="/">Return to home screen</a>
+    </div>
+  </section>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/recorder.js"></script>
+  <script src="/js/room.js"></script>
+</body>
+</html>

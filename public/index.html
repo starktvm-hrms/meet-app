@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Huddle — Video meetings</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="home">
+  <header class="home-header">
+    <div class="brand"><span class="logo">▶</span> Huddle</div>
+    <div class="clock" id="clock"></div>
+  </header>
+
+  <main class="home-main">
+    <section class="home-copy">
+      <h1>Video calls and meetings for everyone</h1>
+      <p>Connect, collaborate and celebrate from anywhere — with recording, chat, screen sharing and live captions built in.</p>
+      <div class="home-actions">
+        <a class="btn primary" href="/new">＋ New meeting</a>
+        <form id="join-form" class="join-form">
+          <input id="code" placeholder="Enter a code or link" autocomplete="off" />
+          <button class="btn text" id="join-btn" disabled>Join</button>
+        </form>
+      </div>
+      <p class="hint" id="err"></p>
+    </section>
+    <section class="home-art" aria-hidden="true">
+      <div class="art-grid">
+        <div style="background:#5f6368">A</div><div style="background:#1a73e8">B</div>
+        <div style="background:#188038">C</div><div style="background:#d93025">D</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const input = document.getElementById('code');
+    const btn = document.getElementById('join-btn');
+    const err = document.getElementById('err');
+    const RE = /([a-z]{3}-[a-z]{4}-[a-z]{3})/;
+    input.addEventListener('input', () => { btn.disabled = !input.value.trim(); err.textContent = ''; });
+    document.getElementById('join-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const m = input.value.trim().toLowerCase().match(RE);
+      if (m) location.href = '/' + m[1];
+      else err.textContent = 'That code doesn’t look right. Codes look like abc-defg-hij.';
+    });
+    const clock = document.getElementById('clock');
+    const tick = () => clock.textContent = new Date().toLocaleString([], { hour: 'numeric', minute: '2-digit', weekday: 'short', month: 'short', day: 'numeric' });
+    tick(); setInterval(tick, 10000);
+  </script>
+</body>
+</html>
