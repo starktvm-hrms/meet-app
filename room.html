@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Huddle meeting</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0" />
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="room">
   <!-- ============ Pre-join lobby ============ -->
@@ -106,12 +106,14 @@
     <h2 id="left-title">You left the meeting</h2>
     <div class="left-actions">
       <button class="btn outline" onclick="location.reload()">Rejoin</button>
-      <a class="btn primary" href="/">Return to home screen</a>
+      <a class="btn primary" href="./">Return to home screen</a>
     </div>
   </section>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/recorder.js"></script>
-  <script src="/js/room.js"></script>
+  <script src="vendor/supabase.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/signaling.js"></script>
+  <script src="js/recorder.js"></script>
+  <script src="js/room.js"></script>
 </body>
 </html>

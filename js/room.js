@@ -1,6 +1,13 @@
-/* global io, MeetingRecorder */
+/* global RealtimeRoom, MeetingRecorder */
 const $ = (id) => document.getElementById(id);
-const ROOM = location.pathname.slice(1);
+const ROOM = (() => {
+  const code = new URLSearchParams(location.search).get('m') || '';
+  if (/^[a-z]{3}-[a-z]{4}-[a-z]{3}$/.test(code)) return code;
+  const pick = (n) => Array.from({ length: n }, () => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join('');
+  const fresh = `${pick(3)}-${pick(4)}-${pick(3)}`;
+  history.replaceState(null, '', `?m=${fresh}`);
+  return fresh;
+})();
 const COLORS = ['#1a73e8', '#188038', '#d93025', '#e37400', '#9334e6', '#c5221f', '#007b83', '#b06000', '#5f6368', '#185abc'];
 const colorFor = (s) => COLORS[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORS.length];
 const initial = (s) => (s.trim()[0] || '?').toUpperCase();
@@ -29,7 +36,7 @@ let socket;
 let micTrack = null;    // local microphone track
 let camTrack = null;    // local camera track
 let screenTrack = null; // local screen share track
-let iceServers = [{ urls: 'stun:stun.l.google.com:19302' }];
+const iceServers = window.HUDDLE_CONFIG.iceServers;
 const peers = new Map(); // id -> { id, info, pc, stream, tile, queue }
 let selfTile;
 let recorder = null;
@@ -135,8 +142,6 @@ async function joinMeeting() {
   audioCtx = audioCtx || new AudioContext();
   audioCtx.resume();
 
-  try { const r = await fetch('/api/ice'); if (r.ok) iceServers = (await r.json()).iceServers; } catch {}
-
   $('lobby').classList.add('hidden');
   $('meeting').classList.remove('hidden');
 
@@ -146,7 +151,7 @@ async function joinMeeting() {
   if (micTrack) watchSpeaking('self', new MediaStream([micTrack]));
   updateButtons();
 
-  socket = io();
+  socket = new RealtimeRoom(ROOM, window.HUDDLE_CONFIG);
   socket.on('connect', () => {
     for (const id of [...peers.keys()]) removePeer(id); // fresh start after a reconnect
     socket.emit('join', { room: ROOM, name, audio: state.audioOn, video: state.videoOn });
